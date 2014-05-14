@@ -4,11 +4,6 @@
 		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 		<script src="https://rawgit.com/janl/mustache.js/master/mustache.js"></script>
 		<script>
-			// function get_artist(artist){
-			// $.get('http://ws.spotify.com/search/1/artist.json?q='+artist, function(artists){
-			// var artists =artists
-			// })
-			// };
 			function get_current_show() {
 				$.get('http://www.bbc.co.uk/radio1/programmes/schedules/england/upcoming.json', function(schedule) {
 					var scheduleObject = schedule;
@@ -21,7 +16,9 @@
 			function current_tracks() {
 				var lastfm_api = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=bbcradio1&api_key=b5c8f8bb84deb8de7d68665b1670971a&format=json';
 				$.get(lastfm_api, function(tracks) {
-					var tracklist = Mustache.render($('#lastfm').html(), tracks["recenttracks"])
+					var track_new = tracks["recenttracks"]["track"][0];
+					track_new["artist"]["text"]=track_new["artist"]["#text"];
+					var tracklist = Mustache.render($('#lastfm').html(), track_new);
 					$("#container").append(tracklist);
 				});
 			};
@@ -40,9 +37,7 @@
 		</template>
 
 		<template id="lastfm">
-			{{#track}}
-				<h1> Now playing: {{ name }} </h1>
-			{{/track}}
+			<h1> Now playing: {{ name }}  {{#artist}}{{text}}{{/artist}}</h1>
 		</template>
 
 	</head>
