@@ -1,0 +1,57 @@
+<html>
+
+	<head>
+		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script src="https://rawgit.com/janl/mustache.js/master/mustache.js"></script>
+		<script>
+			// function get_artist(artist){
+			// $.get('http://ws.spotify.com/search/1/artist.json?q='+artist, function(artists){
+			// var artists =artists
+			// })
+			// };
+			function get_current_show() {
+				$.get('http://www.bbc.co.uk/radio1/programmes/schedules/england/upcoming.json', function(schedule) {
+					var scheduleObject = schedule;
+					var programmeHash = scheduleObject["schedule"]["now"]["broadcast"]["programme"]["programme"];
+					var rendered = Mustache.render($('#temp1').html(), programmeHash);
+					$("#container").html(rendered);
+				});
+			}
+
+			function current_tracks() {
+				var lastfm_api = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=bbcradio1&api_key=b5c8f8bb84deb8de7d68665b1670971a&format=json';
+				$.get(lastfm_api, function(tracks) {
+					var tracklist = Mustache.render($('#lastfm').html(), tracks["recenttracks"])
+					$("#container").append(tracklist);
+				});
+			};
+			
+		</script>
+		<script>
+			$(document).ready(function() {
+				get_current_show();
+				current_tracks();
+			})
+		</script>
+
+		<template id ="temp1">
+			<h1>Show = {{title}}</h1>
+			<h1></h1>
+		</template>
+
+		<template id="lastfm">
+			{{#track}}
+				<h1> Now playing: {{ name }} </h1>
+			{{/track}}
+		</template>
+
+	</head>
+	<body>
+		<section id="container">
+			<h3></h3>
+		</section>
+		<section id="container2">
+			<h3></h3>
+		</section>
+	</body>
+</html>
